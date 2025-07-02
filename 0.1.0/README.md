@@ -15,13 +15,13 @@ To import the latest version of the template:
 The main function exported by the theme is `ens-rennes`.
 
 ```typst
-#show: ens-rennes-theme.with(
+#show: ens-theme.with(
   aspect-ratio: "4-3",
   config-info(
-    title: [Title],
-    subtitle: [Subtitle],
-    mini-title: [title],
-    authors: [Authors],
+    title: [ENS Rennes presentation theme],
+    subtitle: [You can also add a subtitle],
+    mini-title: [ENS Rennes presentation],
+    authors: [Janet Doe],
     date: datetime.today(),
   ),
   department: "info",
