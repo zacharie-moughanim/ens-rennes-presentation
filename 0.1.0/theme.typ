@@ -1,4 +1,5 @@
 #import "@preview/touying:0.6.1": *
+#import "custom-blocks.typ" : *
 
 #let alt_cell = block.with(width: 100%, height: 2.5em, above: 0pt, below: 0pt, breakable: false)
 
@@ -217,38 +218,6 @@
   set text(fill: self.colors.neutral-lightest, weight: "bold", size: 1.5em)
   touying-slide(self: self, config: config, std.align(align, body))
 })
-
-// Blocks
-
-#let tblock(color: black, title: none, it) = {
-  show : block.with(breakable:false)
-  grid(
-    columns: 1,
-    row-gutter: 0pt,
-    block(
-      fill: color,
-      width: 100%,
-      radius: (top: 6pt),
-      inset: (top: 0.4em, bottom: 0.4em, left: 0.5em, right: 0.5em),
-      text(fill:white, title),
-    ),
-    block(
-      fill: color.lighten(90%),
-      width: 100%,
-      radius: (bottom: 6pt),
-      inset: (top: 0.4em, bottom: 0.5em, left: 0.5em, right: 0.5em),
-      it,
-    ),
-  )
-}
-
-#let new-block(kind: none, color:black) = (title:none, body) => tblock(color: color, title: 
-  if title == none [
-    #kind
-  ] else [
-    #kind (#title)
-  ]
-)[#body]
 
 // ENS Rennes theme
 
