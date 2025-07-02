@@ -1,0 +1,15 @@
+[package]
+name = "modern-ens-rennes-presentation"
+version = "0.1.0"
+compiler = "0.13.0"
+entrypoint = "theme.typ"
+authors = ["Zacharie <@zacharie-moughanim>", "Malo <@MDLC01>"]
+license = "MIT"
+description = "The unofficial ENS Rennes template for presentations"
+categories = ["presentation"]
+keywords = ["École Normale Supérieure de Rennes", "presentation", "slides"]
+
+[template]
+path = "template"
+entrypoint = "main.typ"
+thumbnail = "thumbnail.png"
