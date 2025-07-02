@@ -62,5 +62,5 @@ The template provides two functions for Beamer-like blocks:
   #let lemma = new-block(kind: [Lemma], color: rgb("#324c98"))
   #let example = new-block(kind: [Example], color: rgb("#006000"))
   #let remark = new-block(kind: [Remark], color: rgb("#555555"))
-```
+  ```
 - `tblock(color:color, title: content, body)`: for a more personalizable block.
