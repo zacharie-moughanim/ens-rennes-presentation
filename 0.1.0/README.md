@@ -53,7 +53,7 @@ The `title-slide` function has an optional argument `additional-content`, if you
 ### Blocks
 
 The template provides two functions for Beamer-like blocks:
-- `new-block(kind:content, color:color)`: for a theorem-like block, the title will always be of the form "kind (the title of this particular box)". For instance, here's how to get some usual beamer boxes:
+- `new-block(kind:content, color:color)`: for a theorem-like block, the title will always be of the form "kind (the title of this particular block)". For instance, here's how to get some usual beamer blocks:
   ```typst
   #let definition = new-block(kind: [Definition], color: rgb("#324c98"))
   #let theorem = new-block(kind: [Theorem], color: rgb("#bf0000"))
