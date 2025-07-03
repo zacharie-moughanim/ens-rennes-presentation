@@ -10,6 +10,14 @@ To import the latest version of the template:
 #import "@preview/modern-ens-rennes-presentation/0.1.0" : *
 ```
 
+## Font
+
+The ENS Rennes graphic charter require using the `Univers` font, which you can download here: [https://font.download/font/univers](https://font.download/font/univers)
+
+If it is not installed, the font falls back on `New Computer Modern Sans`, and then `CMU Sans Serif`.
+
+You can still use the template if none of the above fonts are installed; but the theme will use an arbitrary installed font.
+
 ## Configurations
 
 The main function exported by the theme is `ens-rennes`.
