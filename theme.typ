@@ -45,7 +45,7 @@
           [#set align(horizon)
           #set align(left)
           #set text(fill: self.colors.neutral-light, size: .7em)
-          #context{
+          #context{ // FIXME: sometimes get the `message layout did not converge within five attempts`
             let (cur-heading, next-heading) = nearest-heading(level:1)
             let cur-subheading = utils.current-heading(level:2)
             let sections = query(heading.where(level: 1))
@@ -74,7 +74,7 @@
       } else {
         set align(horizon)
         set align(left)
-        context {
+        context { // FIXME: sometimes get the `message layout did not converge within five attempts`
           let display-section = ()
           let cur-heading = utils.current-heading(level:1)
           let cur-subheading = utils.current-heading(level:2)
@@ -139,13 +139,13 @@
       utils.call-or-display(self, self.info.title)
     }
     #h(1fr)
-    #context {utils.slide-counter.display() + " / " + utils.last-slide-number}
+    #context {utils.slide-counter.display() + " / " + utils.last-slide-number} // FIXME: sometimes get the `message layout did not converge within five attempts`
     ])
   )
 }
 
 #let slide(title: auto, ..args) = touying-slide-wrapper(self => {
-  set text(font: "Univers")
+  set text(font: list-font)
   set page(foreground: align(top+left)[ #image("src/images/circles.png")])
   set list(marker:(text(self.colors.primary, sym.triangle.r.filled), text(self.colors.primary, [•]), text(self.colors.primary, [–])))
   if title != auto {
@@ -231,7 +231,7 @@
   named-index: true,
   body,
 ) = {
-  set text(size: 20pt, font:"New Computer Modern Sans")
+  set text(size: 20pt, font:list-font)
   
   show: touying-slides.with(
     config-page(
