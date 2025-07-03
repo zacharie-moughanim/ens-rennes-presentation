@@ -33,12 +33,9 @@
   {
     set align(top)
     alt_cell.with(fill: self.colors.primary, inset:(left:1em))([
-      #let display-logo = align(right + horizon,
-        if self.ens-rennes.display-dpt and self.ens-rennes.department == none {
-          image("src/images/ens-logo-main.svg", height: 100%)
-        } else {
-          image("src/images/ens-logo-dpt.svg", height: 100%)
-        }
+      #let display-logo = align(
+        right + horizon,
+        pad(10pt, image("src/images/ens-rennes.svg"))
       )
       #if self.ens-rennes.named-index {
         stack(dir:ltr,
