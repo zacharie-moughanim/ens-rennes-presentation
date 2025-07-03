@@ -32,11 +32,11 @@ The main function exported by the theme is `ens-rennes-theme`.
 )
 ```
 
-It has the following arguments:
-- `aspect-ratio`: the aspect-ratio of each slide; 16-9 by default;
-- `department`: you can specify your department as a string (info, mktro, dem, 2sep, maths, spen);
-- `display-dpt`: set to true if you want the theme to align with the graphic charter of the department rather than the school's; false by default;
-- `named-index`: if true, the subtitles will appear atop the page as strings, otherwise they will simply appear as bullets; true by default.
+It has the following optional arguments:
+- `aspect-ratio`: the aspect-ratio of each slide; `"16-9"` by default;
+- `department`: your department as a string (`"info"`, `"mktro"`, `"dem"`, `"2sep"`, `"maths"`, `"spen"`);
+- `display-dpt`: set to `true` if you want the theme to align with the graphic charter of the department rather than the school's; `false` by default;
+- `named-index`: if `true`, the subtitles will appear atop the page as strings, otherwise they will simply appear as bullets; `true` by default.
 
 You can provide additional information in the config-info dictionary:
 - `title`: the title of the presentation;
