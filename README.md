@@ -5,7 +5,7 @@ This template follows the guidelines described in the ENS Rennes graphic charter
 
 ## Font
 
-The ENS Rennes graphic charter require using the `Univers` font, which you can download here: [https://font.download/font/univers](https://font.download/font/univers)
+The ENS Rennes graphic charter require using the `Univers` font, which you can download at https://font.download/font/univers.
 
 If it is not installed, the font falls back on `New Computer Modern Sans`, and then `CMU Sans Serif`.
 
