@@ -11,7 +11,7 @@
                dem: rgb("93117e"),
                "2sep": rgb("f29500"),
                spen: rgb("#339963"))
-               
+
 #let nearest-heading(level: auto) = {
   let prec-heading = query(selector(heading.where(level:level))).filter(h => h.location().page() <= here().page())
   let next-heading = query(selector(heading.where(level:level))).filter(h => h.location().page() > here().page())
@@ -98,9 +98,9 @@
             ])
           }
           stack(dir:ltr, spacing:1fr, ..display-section,display-logo)
-          
+
         }
-      }      
+      }
     ])
     let subheader-col = rgb("#556fb2")
     if self.ens-rennes.department != none and self.ens-rennes.department in dpt-cols and self.ens-rennes.display-dpt {
@@ -199,7 +199,7 @@
       margin: (top: 8em, bottom: 1.5em, x: 2em)
     ),
   )
-  
+
   touying-slide(self: self, body)
 })
 
@@ -232,7 +232,7 @@
   body,
 ) = {
   set text(size: 20pt, font:list-font)
-  
+
   show: touying-slides.with(
     config-page(
       paper: "presentation-" + aspect-ratio,
