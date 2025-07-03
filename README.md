@@ -3,13 +3,6 @@
 The unofficial ENS Rennes [typst](https://typst.app/home/) template for presentations, based on [touying](https://touying-typ.github.io/).
 This template follows the guidelines described in the ENS Rennes graphic charter.
 
-## Import
-
-To import the latest version of the template:
-```typst
-#import "@preview/modern-ens-rennes-presentation/0.1.0" : *
-```
-
 ## Font
 
 The ENS Rennes graphic charter require using the `Univers` font, which you can download here: [https://font.download/font/univers](https://font.download/font/univers)
