@@ -1,50 +1,68 @@
 #import "@preview/touying:0.6.1": *
-#import "custom-blocks.typ" : *
+#import "custom-blocks.typ": *
 
-#let alt_cell = block.with(width: 100%, height: 2.5em, above: 0pt, below: 0pt, breakable: false)
+#let alt-cell = block.with(
+  width: 100%,
+  height: 2.5em,
+  above: 0pt,
+  below: 0pt,
+  breakable: false,
+)
 
 #let list-font = ("Univers", "New Computer Modern Sans", "CMU Sans Serif")
 
-#let dpt-cols = (info: rgb("#254d58"),
-               maths: rgb("3fb4a6"),
-               mktro: rgb("98bf0c"),
-               dem: rgb("93117e"),
-               "2sep": rgb("f29500"),
-               spen: rgb("#339963"))
+#let dpt-cols = (
+  info: rgb("#254d58"),
+  maths: rgb("3fb4a6"),
+  mktro: rgb("98bf0c"),
+  dem: rgb("93117e"),
+  "2sep": rgb("f29500"),
+  spen: rgb("#339963"),
+)
 
-#let nearest-heading(level: auto) = {
-  let prec-heading = query(selector(heading.where(level:level))).filter(h => h.location().page() <= here().page())
-  let next-heading = query(selector(heading.where(level:level))).filter(h => h.location().page() > here().page())
-  return (prec-heading.at(-1, default:none), next-heading.at(0, default:none))
+#let surrounding-headings(level: auto) = {
+  let headings = query(heading.where(level: level))
+  let previous-headings = headings.filter(h => h.location().page() <= here().page())
+  let next-headings = headings.filter(h => h.location().page() > here().page())
+  return (
+    previous-headings.at(-1, default: none),
+    next-headings.at(0, default: none),
+  )
 }
 
 #let previous-heading(level: auto, loc) = {
-  let prec-heading = query(selector(heading.where(level:level))).filter(h => h.location().page() <= loc.page())
-  return prec-heading.at(-1, default:none)
+  let headings = query(heading.where(level: level))
+  let prec-headings = headings.filter(h => h.location().page() <= loc.page())
+  return prec-headings.at(-1, default: none)
 }
 
-#let display-header(heading, body:none) = if body == none {
-  link((page:heading.location().page(), x:0pt, y:0pt), heading.body)
-} else {
-  link((page:heading.location().page(), x:0pt, y:0pt), body)
+#let display-header(heading, body: none) = {
+  let dest = (page: heading.location().page(), x: 0pt, y: 0pt)
+  if body == none {
+    link(dest, heading.body)
+  } else {
+    link(dest, body)
+  }
 }
 
-#let header(self, dpt-color:none) = {
-  {
-    set align(top)
-    alt_cell.with(fill: self.colors.primary, inset:(left:1em))([
-      #let display-logo = align(
-        right + horizon,
-        pad(10pt, image("src/images/ens-rennes.svg"))
-      )
-      #if self.ens-rennes.named-index {
-        stack(dir:ltr,
-          [#set align(horizon)
-          #set align(left)
-          #set text(fill: self.colors.neutral-light, size: .7em)
-          #context{ // FIXME: sometimes get the `message layout did not converge within five attempts`
-            let (cur-heading, next-heading) = nearest-heading(level:1)
-            let cur-subheading = utils.current-heading(level:2)
+#let header(self, dpt-color: none) = {
+  set align(top)
+  alt-cell(fill: self.colors.primary, inset: (left: 1em), {
+    let display-logo = align(
+      right + horizon,
+      pad(10pt, image("src/images/ens-rennes.svg"))
+    )
+    if self.ens-rennes.named-index {
+      stack(
+        dir: ltr,
+        {
+          set align(horizon)
+          set align(start)
+          set text(fill: self.colors.neutral-light, size: 0.7em)
+          // FIXME: Sometimes get the message "layout did not converge within five attempts".
+          context {
+            let (cur-heading, next-heading) = surrounding-headings(level: 1)
+            let cur-subheading = utils.current-heading(level: 2)
             let sections = query(heading.where(level: 1))
             for section in sections {
               if cur-heading == section {
@@ -56,7 +74,7 @@
             }
             linebreak()
             set text(fill: self.colors.neutral-light, size: .8em)
-            let subsections = query(heading).filter(h => h.level == 2 and previous-heading(level:1, h.location()) == cur-heading)
+            let subsections = query(heading).filter(h => h.level == 2 and previous-heading(level: 1, h.location()) == cur-heading)
             for subsection in subsections {
                 if cur-subheading == subsection {
                   text(self.colors.neutral-lightest, display-header(subsection))
@@ -67,84 +85,94 @@
             }
             if subsections == () []
           }
-        ],display-logo)
-      } else {
-        set align(horizon)
-        set align(left)
-        context { // FIXME: sometimes get the `message layout did not converge within five attempts`
-          let display-section = ()
-          let cur-heading = utils.current-heading(level:1)
-          let cur-subheading = utils.current-heading(level:2)
-          let sections = query(heading.where(level: 1))
-          set text(fill: self.colors.neutral-light, size: .7em)
-          for section in sections {
-            let subsections = query(heading).filter(h => h.level == 2 and previous-heading(level:1, h.location()) == section)
-            display-section.push([
-              #if cur-heading == section {
-                text(self.colors.neutral-lightest, display-header(section))
+        },
+        display-logo,
+      )
+    } else {
+      set align(horizon)
+      set align(left)
+      // FIXME: Sometimes get the message "layout did not converge within five attempts".
+      context {
+        let display-section = ()
+        let cur-heading = utils.current-heading(level: 1)
+        let cur-subheading = utils.current-heading(level: 2)
+        let sections = query(heading.where(level: 1))
+        set text(fill: self.colors.neutral-light, size: 0.7em)
+        for section in sections {
+          let subsections = query(heading).filter(h => h.level == 2 and previous-heading(level: 1, h.location()) == section)
+          display-section.push([
+            #if cur-heading == section {
+              text(self.colors.neutral-lightest, display-header(section))
+            } else {
+                text(self.colors.neutral-light.transparentize(50%), display-header(section))
+            }\
+            #for subsection in subsections {
+              if cur-subheading == subsection {
+                display-header(subsection, body:sym.circle.filled)
               } else {
-                  text(self.colors.neutral-light.transparentize(50%), display-header(section))
-              }\
-              #for subsection in subsections {
-                if cur-subheading == subsection {
-                  display-header(subsection, body:sym.circle.filled)
-                } else {
-                  display-header(subsection, body:sym.circle)
-                }
+                display-header(subsection, body:sym.circle)
               }
-            ])
-          }
-          stack(dir:ltr, spacing:1fr, ..display-section,display-logo)
-
+            }
+          ])
         }
+        stack(dir:ltr, spacing:1fr, ..display-section,display-logo)
+
       }
-    ])
-    let subheader-col = rgb("#556fb2")
-    if self.ens-rennes.department != none and self.ens-rennes.department in dpt-cols and self.ens-rennes.display-dpt {
-      subheader-col = gradient.linear(dpt-cols.at(self.ens-rennes.department), dpt-cols.at(self.ens-rennes.department).lighten(60%))
     }
-    alt_cell.with(fill: subheader-col, inset: 1em)([
-      #set align(horizon)
-      #set text(fill: self.colors.neutral-lightest, size: .7em)
-      #set text(size: 1.5em)
-      #if self.store.title != auto {
-        utils.call-or-display(self, self.store.title)
-      }
-    ])
+  })
+  let subheader-col = rgb("#556fb2")
+  if self.ens-rennes.department != none and self.ens-rennes.department in dpt-cols and self.ens-rennes.display-dpt {
+    subheader-col = gradient.linear(dpt-cols.at(self.ens-rennes.department), dpt-cols.at(self.ens-rennes.department).lighten(60%))
   }
+  alt-cell(fill: subheader-col, inset: 1em, {
+    set align(horizon)
+    set text(fill: self.colors.neutral-lightest, size: 0.7em)
+    set text(size: 1.5em)
+    if self.store.title != auto {
+      utils.call-or-display(self, self.store.title)
+    }
+  })
 }
 
 #let footer(self) = {
   set align(bottom + left)
-  set text(fill: self.colors.neutral-lightest, size: .8em)
-  stack(dir:ltr,
-    block.with(width: 50%, height: 100%, above: 0pt, below: 0pt, breakable: false, fill: self.colors.primary, inset: 1em)([
-    #set align(horizon)
-    #show: pad.with(.4em)
-    #if "mini-authors" in self.info {
-      utils.call-or-display(self, self.info.mini-authors)
-    } else {
-      utils.call-or-display(self, self.info.author)
-    }
-    ]),
-    block.with(width: 50%, height: 100%, above: 0pt, below: 0pt, breakable: false, fill: self.colors.primary, inset: 1em)([
-    #set align(right)
-    #set align(horizon)
-    #if "mini-title" in self.info {
-      utils.call-or-display(self, self.info.mini-title)
-    } else {
-      utils.call-or-display(self, self.info.title)
-    }
-    #h(1fr)
-    #context {utils.slide-counter.display() + " / " + utils.last-slide-number} // FIXME: sometimes get the `message layout did not converge within five attempts`
-    ])
+  set text(fill: self.colors.neutral-lightest, size: 0.8em)
+  stack(
+    dir: ltr,
+    block(width: 50%, height: 100%, above: 0pt, below: 0pt, breakable: false, fill: self.colors.primary, inset: 1em, {
+      set align(horizon)
+      show: pad.with(0.4em)
+      if "mini-authors" in self.info {
+        utils.call-or-display(self, self.info.mini-authors)
+      } else {
+        utils.call-or-display(self, self.info.author)
+      }
+    }),
+    block(width: 50%, height: 100%, above: 0pt, below: 0pt, breakable: false, fill: self.colors.primary, inset: 1em, {
+      set align(right)
+      set align(horizon)
+      if "mini-title" in self.info {
+        utils.call-or-display(self, self.info.mini-title)
+      } else {
+        utils.call-or-display(self, self.info.title)
+      }
+      h(1fr)
+      // FIXME: Sometimes get the message "layout did not converge within five attempts".
+      [#context utils.slide-counter.display() / #utils.last-slide-number]
+    })
   )
 }
 
 #let slide(title: auto, ..args) = touying-slide-wrapper(self => {
   set text(font: list-font)
   set page(foreground: align(top+left)[ #image("src/images/circles.png")])
-  set list(marker:(text(self.colors.primary, sym.triangle.r.filled), text(self.colors.primary, [•]), text(self.colors.primary, [–])))
+  set list(
+    marker: (
+      text(self.colors.primary, sym.triangle.r.filled),
+      text(self.colors.primary, sym.bullet),
+      text(self.colors.primary, sym.dash.en),
+    ),
+  )
   if title != auto {
     self.store.title = title
   }
@@ -159,7 +187,7 @@
   touying-slide(self: self, ..args)
 })
 
-#let title-slide(additional-content:none, ..args) = touying-slide-wrapper(self => {
+#let title-slide(additional-content: none, ..args) = touying-slide-wrapper(self => {
   set text(font: list-font)
   set page(foreground: align(top+left)[ #image("src/images/circles.png")])
   let info = self.info + args.named()
@@ -228,7 +256,7 @@
   named-index: true,
   body,
 ) = {
-  set text(size: 20pt, font:list-font)
+  set text(size: 20pt, font: list-font)
 
   show: touying-slides.with(
     config-page(
