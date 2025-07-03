@@ -20,7 +20,7 @@ You can still use the template if none of the above fonts are installed; but the
 
 ## Configurations
 
-The main function exported by the theme is `ens-rennes`.
+The main function exported by the theme is `ens-rennes-theme`.
 
 ```typst
 #show: ens-rennes-theme.with(
