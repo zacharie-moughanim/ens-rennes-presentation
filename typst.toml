@@ -8,7 +8,7 @@ license = "MIT"
 description = "The unofficial ENS Rennes template for presentations"
 repository = "https://github.com/zacharie-moughanim/modern-ens-rennes-presentation"
 categories = ["presentation"]
-keywords = ["École Normale Supérieure de Rennes", "presentation", "slides"]
+keywords = ["École Normale Supérieure de Rennes", "ENS Rennes", "presentation", "slides"]
 
 [template]
 path = "template"
