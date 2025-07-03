@@ -7,7 +7,7 @@ This template follows the guidelines described in the ENS Rennes graphic charter
 
 To import the latest version of the template:
 ```typst
-#import "@preview/ens-rennes-touying-theme/0.1.0" : *
+#import "@preview/modern-ens-rennes-presentation/0.1.0" : *
 ```
 
 ## Configurations
@@ -15,13 +15,14 @@ To import the latest version of the template:
 The main function exported by the theme is `ens-rennes`.
 
 ```typst
-#show: ens-theme.with(
+#show: ens-rennes-theme.with(
   aspect-ratio: "4-3",
   config-info(
     title: [ENS Rennes presentation theme],
     subtitle: [You can also add a subtitle],
     mini-title: [ENS Rennes presentation],
     authors: [Janet Doe],
+    mini-authors: [Doe],
     date: datetime.today(),
   ),
   department: "info",
