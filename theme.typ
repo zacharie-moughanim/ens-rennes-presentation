@@ -221,7 +221,7 @@
 
 // ENS Rennes theme
 
-#let ens-rennes-presentation(
+#let ens-rennes-theme(
   aspect-ratio: "16-9",
   footer: none,
   info,
