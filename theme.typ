@@ -128,31 +128,18 @@
 }
 
 #let footer(self) = {
-  set align(bottom + left)
   set text(fill: self.colors.neutral-lightest, size: 0.8em)
-  stack(
-    dir: ltr,
-    block(width: 50%, height: 100%, above: 0pt, below: 0pt, breakable: false, fill: self.colors.primary, inset: 1em, {
-      set align(horizon)
-      show: pad.with(0.4em)
-      if "mini-authors" in self.info {
-        utils.call-or-display(self, self.info.mini-authors)
-      } else {
-        utils.call-or-display(self, self.info.author)
-      }
-    }),
-    block(width: 50%, height: 100%, above: 0pt, below: 0pt, breakable: false, fill: self.colors.primary, inset: 1em, {
-      set align(right)
-      set align(horizon)
-      if "mini-title" in self.info {
-        utils.call-or-display(self, self.info.mini-title)
-      } else {
-        utils.call-or-display(self, self.info.title)
-      }
-      h(1fr)
-      // FIXME: Sometimes get the message "layout did not converge within five attempts".
-      [#context utils.slide-counter.display() / #utils.last-slide-number]
-    })
+  show: block.with(
+    fill: self.colors.primary,
+    inset: 1em,
+  )
+  grid(
+    columns: (2fr, 1fr, 1fr),
+    column-gutter: 1em,
+    align: (start + horizon, start + horizon, end + horizon),
+    utils.call-or-display(self, self.info.at("mini-authors", default: self.info.author)),
+    utils.call-or-display(self, self.info.at("mini-title", default: self.info.title)),
+    [#context utils.slide-counter.display() / #utils.last-slide-number],
   )
 }
 
