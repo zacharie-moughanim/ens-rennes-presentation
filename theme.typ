@@ -115,7 +115,7 @@
   })
 
   let subheader-col = rgb("#556fb2")
-  if self.ens-rennes.department != none and self.ens-rennes.department in dpt-cols and self.ens-rennes.display-dpt {
+  if self.ens-rennes.department != none and self.ens-rennes.display-dpt {
     subheader-col = gradient.linear(dpt-cols.at(self.ens-rennes.department), dpt-cols.at(self.ens-rennes.department).lighten(60%))
   }
   alt-cell(fill: subheader-col, inset: 1em, {
@@ -250,6 +250,11 @@
   body,
 ) = {
   set text(size: 20pt, font: list-font)
+
+  assert(
+    department in dpt-cols,
+    message: "`department` must be one " + dpt-cols.keys().map(repr).join(", ", last: ", or ")
+  )
 
   show: touying-slides.with(
     config-page(
