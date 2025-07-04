@@ -20,114 +20,107 @@
   spen: rgb("#339963"),
 )
 
-#let surrounding-headings(level: auto) = {
-  let headings = query(heading.where(level: level))
-  let previous-headings = headings.filter(h => h.location().page() <= here().page())
-  let next-headings = headings.filter(h => h.location().page() > here().page())
-  return (
-    previous-headings.at(-1, default: none),
-    next-headings.at(0, default: none),
-  )
+#let section-link(section, body) = {
+  link((page: section.location().page(), x: 0pt, y: 0pt), body)
 }
 
-#let previous-heading(level: auto, loc) = {
-  let headings = query(heading.where(level: level))
-  let prec-headings = headings.filter(h => h.location().page() <= loc.page())
-  return prec-headings.at(-1, default: none)
+#let is-active-section(section) = {
+  let active-section = utils.current-heading(level: section.level)
+  active-section != none and section.location() == active-section.location()
 }
 
-#let display-header(heading, body: none) = {
-  let dest = (page: heading.location().page(), x: 0pt, y: 0pt)
-  if body == none {
-    link(dest, heading.body)
-  } else {
-    link(dest, body)
+#let get-sections(level, loc: auto) = {
+  if loc == auto {
+    // A bit of a hack, but it works.
+    let active-section = utils.current-heading(level: level - 1)
+    if active-section != none {
+      loc = active-section.location()
+    } else {
+      loc = here()
+    }
   }
+
+  let parent-heading = heading.where(level: level - 1)
+
+  let selector = heading.where(level: level)
+
+  let previous-parents = query(parent-heading.before(loc))
+  if previous-parents.len() != 0 {
+    selector = selector.after(previous-parents.last().location())
+  }
+
+  let next-parents = query(parent-heading.after(loc, inclusive: false))
+  if next-parents.len() != 0 {
+    selector = selector.before(next-parents.first().location(), inclusive: false)
+  }
+
+  query(selector)
 }
 
 #let header(self, dpt-color: none) = {
   set align(top)
   alt-cell(fill: self.colors.primary, inset: (left: 1em), {
-    let display-logo = align(
-      right + horizon,
-      pad(10pt, image("src/images/ens-rennes.svg"))
+    set text(fill: self.colors.neutral-light.transparentize(50%), size: 0.7em)
+    show: it => grid(
+      columns: (1fr, auto),
+      align: (start + horizon, end + horizon),
+      it,
+      pad(10pt, image("src/images/ens-rennes.svg")),
     )
     if self.ens-rennes.named-index {
+      let row(level) = context {
+        show: block.with(height: 1em)
+        get-sections(level)
+            .map(section => {
+              set text(fill: self.colors.neutral-lightest) if is-active-section(section)
+              section-link(section, section.body)
+            })
+          .join(h(1em))
+      }
       stack(
-        dir: ltr,
-        {
-          set align(horizon)
-          set align(start)
-          set text(fill: self.colors.neutral-light, size: 0.7em)
-          // FIXME: Sometimes get the message "layout did not converge within five attempts".
-          context {
-            let (cur-heading, next-heading) = surrounding-headings(level: 1)
-            let cur-subheading = utils.current-heading(level: 2)
-            let sections = query(heading.where(level: 1))
-            for section in sections {
-              if cur-heading == section {
-                text(self.colors.neutral-lightest, display-header(section))
-              } else {
-                text(self.colors.neutral-light.transparentize(50%), display-header(section))
-              }
-              h(1em)
-            }
-            linebreak()
-            set text(fill: self.colors.neutral-light, size: .8em)
-            let subsections = query(heading).filter(h => h.level == 2 and previous-heading(level: 1, h.location()) == cur-heading)
-            for subsection in subsections {
-                if cur-subheading == subsection {
-                  text(self.colors.neutral-lightest, display-header(subsection))
-                } else {
-                  text(self.colors.neutral-light.transparentize(50%), display-header(subsection))
-                }
-                h(1em)
-            }
-            if subsections == () []
-          }
-        },
-        display-logo,
+        dir: ttb,
+        spacing: 0.2em,
+        row(1),
+        text(size: 0.8em, row(2)),
       )
     } else {
-      set align(horizon)
-      set align(left)
-      // FIXME: Sometimes get the message "layout did not converge within five attempts".
       context {
-        let display-section = ()
-        let cur-heading = utils.current-heading(level: 1)
-        let cur-subheading = utils.current-heading(level: 2)
-        let sections = query(heading.where(level: 1))
-        set text(fill: self.colors.neutral-light, size: 0.7em)
-        for section in sections {
-          let subsections = query(heading).filter(h => h.level == 2 and previous-heading(level: 1, h.location()) == section)
-          display-section.push([
-            #if cur-heading == section {
-              text(self.colors.neutral-lightest, display-header(section))
-            } else {
-                text(self.colors.neutral-light.transparentize(50%), display-header(section))
-            }\
-            #for subsection in subsections {
-              if cur-subheading == subsection {
-                display-header(subsection, body:sym.circle.filled)
-              } else {
-                display-header(subsection, body:sym.circle)
-              }
+        let sections = get-sections(1)
+        grid(
+          columns: sections.len(),
+          column-gutter: 1em,
+          row-gutter: 0.2em,
+          ..sections.map(section => {
+            set text(fill: self.colors.neutral-lightest) if is-active-section(section)
+            section-link(section, section.body)
+          }),
+          ..sections.map(section => {
+            show: block.with(height: 1em)
+            set text(fill: self.colors.neutral-lightest) if is-active-section(section)
+            let subsections = get-sections(2, loc: section.location())
+            for subsection in subsections {
+              section-link(
+                subsection,
+                if is-active-section(subsection) {
+                  sym.circle.filled
+                } else {
+                  sym.circle.stroked
+                },
+              )
             }
-          ])
-        }
-        stack(dir:ltr, spacing:1fr, ..display-section,display-logo)
-
+          })
+        )
       }
     }
   })
+
   let subheader-col = rgb("#556fb2")
   if self.ens-rennes.department != none and self.ens-rennes.department in dpt-cols and self.ens-rennes.display-dpt {
     subheader-col = gradient.linear(dpt-cols.at(self.ens-rennes.department), dpt-cols.at(self.ens-rennes.department).lighten(60%))
   }
   alt-cell(fill: subheader-col, inset: 1em, {
     set align(horizon)
-    set text(fill: self.colors.neutral-lightest, size: 0.7em)
-    set text(size: 1.5em)
+    set text(fill: self.colors.neutral-lightest)
     if self.store.title != auto {
       utils.call-or-display(self, self.store.title)
     }
