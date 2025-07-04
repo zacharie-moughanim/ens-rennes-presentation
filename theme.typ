@@ -12,7 +12,7 @@
 #let list-font = ("Univers", "New Computer Modern Sans", "CMU Sans Serif")
 
 #let dpt-cols = (
-  info: rgb("#254d58"),
+  info: rgb("#49bfe0"),
   maths: rgb("3fb4a6"),
   mktro: rgb("98bf0c"),
   dem: rgb("93117e"),
