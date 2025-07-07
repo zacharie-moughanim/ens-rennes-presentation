@@ -134,7 +134,7 @@
     inset: 1em,
   )
   grid(
-    columns: (2fr, 1fr, 1fr),
+    columns: (5fr, 4fr, 1fr),
     column-gutter: 1em,
     align: (start + horizon, start + horizon, end + horizon),
     utils.call-or-display(self, self.info.at("mini-authors", default: self.info.author)),
