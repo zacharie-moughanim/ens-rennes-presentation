@@ -65,7 +65,7 @@
       columns: (1fr, auto),
       align: (start + horizon, end + horizon),
       it,
-      pad(10pt, image("src/images/ens-rennes.svg")),
+      pad(10pt, image("src/images/ENSRennes_LOGOblanc_centre.svg")),
     )
     if self.ens-rennes.named-index {
       let row(level) = context {
