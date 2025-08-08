@@ -20,6 +20,8 @@
   spen: rgb("#339963"),
 )
 
+#let section-styles = ("named subsection", "subsection", "section")
+
 #let section-link(section, body) = {
   link((page: section.location().page(), x: 0pt, y: 0pt), body)
 }
@@ -67,7 +69,7 @@
       it,
       pad(10pt, image("src/images/ENSRennes_LOGOblanc_centre.svg")),
     )
-    if self.ens-rennes.named-index {
+    if self.ens-rennes.section-style == "named subsection" {
       let row(level) = context {
         show: block.with(height: 1em)
         get-sections(level)
@@ -83,7 +85,7 @@
         row(1),
         text(size: 0.8em, row(2)),
       )
-    } else {
+    } else if self.ens-rennes.section-style == "subsection" {
       context {
         let sections = get-sections(1)
         grid(
@@ -111,6 +113,17 @@
           })
         )
       }
+    } else if self.ens-rennes.section-style == "section" {
+      let row(level) = context {
+        show: block.with(height: 1em)
+        get-sections(level)
+            .map(section => {
+              set text(fill: self.colors.neutral-lightest) if is-active-section(section)
+              section-link(section, section.body)
+            })
+          .join(h(1em))
+      }
+      row(1)
     }
   })
 
@@ -121,7 +134,12 @@
   alt-cell(fill: subheader-col, inset: 1em, {
     set align(horizon)
     set text(fill: self.colors.neutral-lightest)
-    if self.store.title != auto {
+    if self.store.title == auto {
+      context {
+        show heading : it => text(size:.8em, weight:"regular", it)
+        utils.call-or-display(self, utils.current-heading(level:2))
+      }
+    } else if self.store.title != none {
       utils.call-or-display(self, self.store.title)
     }
   })
@@ -153,9 +171,7 @@
       text(self.colors.primary, sym.dash.en),
     ),
   )
-  if title != auto {
-    self.store.title = title
-  }
+  self.store.title = title
   self = utils.merge-dicts(
     self,
     config-page(
@@ -233,14 +249,19 @@
   ..args,
   department: none,
   display-dpt: false,
-  named-index: true,
+  section-style: "named subsection",
   body,
 ) = {
   set text(size: 20pt, font: list-font)
 
   assert(
     department in dpt-cols,
-    message: "`department` must be one " + dpt-cols.keys().map(repr).join(", ", last: ", or ")
+    message: "`department` must be one of " + dpt-cols.keys().map(repr).join(", ", last: ", or ")
+  )
+
+  assert(
+    section-style in section-styles,
+    message: "`section-style` must be one of " + section-styles.join(", ", last: ", or ")
   )
 
   show: touying-slides.with(
@@ -279,7 +300,7 @@
       ens-rennes: (
         department: department,
         display-dpt: display-dpt,
-        named-index: named-index,
+        section-style: section-style,
       ),
     ),
   )

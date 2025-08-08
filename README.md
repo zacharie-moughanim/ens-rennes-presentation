@@ -36,7 +36,7 @@ It has the following optional arguments:
 - `aspect-ratio`: the aspect-ratio of each slide; `"16-9"` by default;
 - `department`: your department as a string (`"info"`, `"mktro"`, `"dem"`, `"2sep"`, `"maths"`, `"spen"`);
 - `display-dpt`: set to `true` if you want the theme to align with the graphic charter of the department rather than the school's; `false` by default;
-- `named-index`: if `true`, the subtitles will appear atop the page as strings, otherwise they will simply appear as bullets; `true` by default.
+- `section-style`: several options to display sections in the header: `"section"` to display only section titles, `"named subsection"` to display section and subsection titles and `"subsection"` to display section titles, and subsection as bullets.
 
 You can provide additional information in the config-info dictionary:
 - `title`: the title of the presentation;
@@ -47,6 +47,13 @@ You can provide additional information in the config-info dictionary:
 - `date`: the date you want to appear in the title page.
 
 ## Personalization
+
+### Title of each slide
+
+There are several possibilities for each slide's title:
+- `auto` by default, displays the subsection title;
+- `none` displays nothing;
+- or any custom content, via the optional argument `title` of the `slide` function.
 
 ### Add content in the title
 
