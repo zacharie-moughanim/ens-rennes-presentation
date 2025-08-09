@@ -61,22 +61,21 @@
 
 #let header(self, dpt-color: none) = {
   let row(level) = context {
-        show: block.with(height: 1em)
-        get-sections(level)
-            .map(section => {
-              set text(fill: self.colors.neutral-lightest) if is-active-section(section)
-              section-link(section, section.body)
-            })
-          .join(h(1em))
-      }
+    show: block.with(height: 1em)
+    get-sections(level)
+      .map(section => {
+        set text(fill: self.colors.neutral-lightest) if is-active-section(section)
+        section-link(section, section.body)
+      })
+      .join(h(1em))
+  }
   set align(top)
   alt-cell(fill: self.colors.primary, inset: (left: 1em), {
     set text(fill: self.colors.neutral-light.transparentize(50%), size: 0.7em)
     show: it => grid(
       columns: (1fr, auto),
       align: (start + horizon, end + horizon),
-      it,
-      pad(10pt, image("src/images/ENSRennes_LOGOblanc_centre.svg")),
+      it, pad(10pt, image("src/images/ENSRennes_LOGOblanc_centre.svg")),
     )
     if self.ens-rennes.section-style == "named subsection" {
       stack(
@@ -120,15 +119,18 @@
 
   let subheader-col = rgb("#556fb2")
   if self.ens-rennes.department != none and self.ens-rennes.display-dpt {
-    subheader-col = gradient.linear(dpt-cols.at(self.ens-rennes.department), dpt-cols.at(self.ens-rennes.department).lighten(60%))
+    subheader-col = gradient.linear(
+      dpt-cols.at(self.ens-rennes.department),
+      dpt-cols.at(self.ens-rennes.department).lighten(60%),
+    )
   }
   alt-cell(fill: subheader-col, inset: 1em, {
     set align(horizon)
     set text(fill: self.colors.neutral-lightest)
     if self.store.title == auto {
       context {
-        show heading : it => text(size:.8em, weight:"regular", it)
-        utils.call-or-display(self, utils.current-heading(level:2))
+        show heading: it => text(size: .8em, weight: "regular", it)
+        utils.call-or-display(self, utils.current-heading(level: 2))
       }
     } else if self.store.title != none {
       utils.call-or-display(self, self.store.title)
@@ -154,7 +156,7 @@
 
 #let slide(title: auto, ..args) = touying-slide-wrapper(self => {
   set text(font: list-font)
-  set page(foreground: align(top+left)[ #image("src/images/circles.png")])
+  set page(foreground: align(top + left)[ #image("src/images/circles.png")])
   set list(
     marker: (
       text(self.colors.primary, sym.triangle.r.filled),
@@ -168,7 +170,7 @@
     config-page(
       header: header,
       footer: footer,
-      margin: (top: 6em, bottom: 1.5em, x: 2em)
+      margin: (top: 6em, bottom: 1.5em, x: 2em),
     ),
   )
   touying-slide(self: self, ..args)
@@ -176,7 +178,7 @@
 
 #let title-slide(additional-content: none, ..args) = touying-slide-wrapper(self => {
   set text(font: list-font)
-  set page(foreground: align(top+left)[ #image("src/images/circles.png")])
+  set page(foreground: align(top + left)[ #image("src/images/circles.png")])
   let info = self.info + args.named()
   let body = {
     set align(center + horizon)
@@ -189,7 +191,7 @@
         text(size: 2em, fill: self.colors.neutral-lightest, info.title)
         linebreak()
         text(size: 1em, fill: self.colors.neutral-lightest, info.subtitle)
-      }
+      },
     )
     set text(fill: self.colors.neutral-darkest)
     if info.authors != none {
@@ -208,7 +210,7 @@
     config-page(
       header: header,
       footer: footer,
-      margin: (top: 8em, bottom: 1.5em, x: 2em)
+      margin: (top: 8em, bottom: 1.5em, x: 2em),
     ),
   )
 
@@ -247,12 +249,12 @@
 
   assert(
     department in dpt-cols,
-    message: "`department` must be one of " + dpt-cols.keys().map(repr).join(", ", last: ", or ")
+    message: "`department` must be one of " + dpt-cols.keys().map(repr).join(", ", last: ", or "),
   )
 
   assert(
     section-style in section-styles,
-    message: "`section-style` must be one of " + section-styles.join(", ", last: ", or ")
+    message: "`section-style` must be one of " + section-styles.join(", ", last: ", or "),
   )
 
   show: touying-slides.with(
@@ -268,7 +270,7 @@
       primary: if display-dpt and department != none {
         dpt-cols.at(department)
       } else {
-         rgb("324c98")
+        rgb("324c98")
       },
       neutral-lightest: rgb("#ffffff"),
       neutral-lighter: rgb("#ffffff"),
