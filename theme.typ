@@ -60,6 +60,15 @@
 }
 
 #let header(self, dpt-color: none) = {
+  let row(level) = context {
+        show: block.with(height: 1em)
+        get-sections(level)
+            .map(section => {
+              set text(fill: self.colors.neutral-lightest) if is-active-section(section)
+              section-link(section, section.body)
+            })
+          .join(h(1em))
+      }
   set align(top)
   alt-cell(fill: self.colors.primary, inset: (left: 1em), {
     set text(fill: self.colors.neutral-light.transparentize(50%), size: 0.7em)
@@ -70,15 +79,6 @@
       pad(10pt, image("src/images/ENSRennes_LOGOblanc_centre.svg")),
     )
     if self.ens-rennes.section-style == "named subsection" {
-      let row(level) = context {
-        show: block.with(height: 1em)
-        get-sections(level)
-            .map(section => {
-              set text(fill: self.colors.neutral-lightest) if is-active-section(section)
-              section-link(section, section.body)
-            })
-          .join(h(1em))
-      }
       stack(
         dir: ttb,
         spacing: 0.2em,
@@ -114,15 +114,6 @@
         )
       }
     } else if self.ens-rennes.section-style == "section" {
-      let row(level) = context {
-        show: block.with(height: 1em)
-        get-sections(level)
-            .map(section => {
-              set text(fill: self.colors.neutral-lightest) if is-active-section(section)
-              section-link(section, section.body)
-            })
-          .join(h(1em))
-      }
       row(1)
     }
   })
