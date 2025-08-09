@@ -43,19 +43,18 @@
   }
 
   let parent-heading = heading.where(level: level - 1)
-
   let selector = heading.where(level: level)
 
   let previous-parents = query(parent-heading.before(loc))
-  if previous-parents.len() != 0 {
-    selector = selector.after(previous-parents.last().location())
-  }
-
   let next-parents = query(parent-heading.after(loc, inclusive: false))
+
+  let rev = false
   if next-parents.len() != 0 {
     selector = selector.before(next-parents.first().location(), inclusive: false)
   }
-
+  if previous-parents.len() != 0 {
+    selector = selector.after(previous-parents.last().location())
+  }
   query(selector)
 }
 
@@ -130,7 +129,7 @@
     if self.store.title == auto {
       context {
         show heading: it => text(size: .8em, weight: "regular", it)
-        utils.call-or-display(self, utils.current-heading(level: 2))
+        utils.call-or-display(self, utils.current-heading(level: 2).body)
       }
     } else if self.store.title != none {
       utils.call-or-display(self, self.store.title)
