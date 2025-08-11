@@ -26,59 +26,67 @@
   link((page: section.location().page(), x: 0pt, y: 0pt), body)
 }
 
-#let is-active-section(section) = {
-  let active-section = utils.current-heading(level: section.level)
+#let is-active-section(section, active-section: none) = {
+  active-section = if  active-section == none  {
+    utils.current-heading(level: section.level)
+  } else {
+    active-section
+  }
   active-section != none and section.location() == active-section.location()
 }
 
 #let get-sections(level, loc: auto) = {
+  if (level > 2 or level < 1) {
+    panic("`get-sections` only supports levels 1 and 2, got " + repr(level))
+  }
+
+  let main-active-section = utils.current-heading(level: 1)
   if loc == auto {
     // A bit of a hack, but it works.
-    let active-section = utils.current-heading(level: level - 1)
-    if active-section != none {
-      loc = active-section.location()
+    if level == 2 and main-active-section != none {
+      loc = main-active-section.location()
     } else {
       loc = here()
     }
   }
 
   let parent-heading = heading.where(level: level - 1)
-
-  let selector = heading.where(level: level)
+  let selector = heading.where(level: level, outlined: true)
+  if (level == 1 and main-active-section != none) {
+    selector = selector.or(main-active-section.location())
+  }
 
   let previous-parents = query(parent-heading.before(loc))
+  let next-parents = query(parent-heading.after(loc, inclusive: false))
+
   if previous-parents.len() != 0 {
     selector = selector.after(previous-parents.last().location())
   }
-
-  let next-parents = query(parent-heading.after(loc, inclusive: false))
   if next-parents.len() != 0 {
     selector = selector.before(next-parents.first().location(), inclusive: false)
   }
-
   query(selector)
 }
 
 #let header(self, dpt-color: none) = {
+  let row(level) = context {
+    show: block.with(height: 1em)
+    get-sections(level)
+      .map(section => {
+        set text(fill: self.colors.neutral-lightest) if is-active-section(section)
+        section-link(section, section.body)
+      })
+      .join(h(1em))
+  }
   set align(top)
   alt-cell(fill: self.colors.primary, inset: (left: 1em), {
     set text(fill: self.colors.neutral-light.transparentize(50%), size: 0.7em)
     show: it => grid(
       columns: (1fr, auto),
       align: (start + horizon, end + horizon),
-      it,
-      pad(10pt, image("src/images/ENSRennes_LOGOblanc_centre.svg")),
+      it, pad(10pt, image("src/images/ENSRennes_LOGOblanc_centre.svg")),
     )
     if self.ens-rennes.section-style == "named subsection" {
-      let row(level) = context {
-        show: block.with(height: 1em)
-        get-sections(level)
-            .map(section => {
-              set text(fill: self.colors.neutral-lightest) if is-active-section(section)
-              section-link(section, section.body)
-            })
-          .join(h(1em))
-      }
       stack(
         dir: ttb,
         spacing: 0.2em,
@@ -114,30 +122,24 @@
         )
       }
     } else if self.ens-rennes.section-style == "section" {
-      let row(level) = context {
-        show: block.with(height: 1em)
-        get-sections(level)
-            .map(section => {
-              set text(fill: self.colors.neutral-lightest) if is-active-section(section)
-              section-link(section, section.body)
-            })
-          .join(h(1em))
-      }
       row(1)
     }
   })
 
   let subheader-col = rgb("#556fb2")
   if self.ens-rennes.department != none and self.ens-rennes.display-dpt {
-    subheader-col = gradient.linear(dpt-cols.at(self.ens-rennes.department), dpt-cols.at(self.ens-rennes.department).lighten(60%))
+    subheader-col = gradient.linear(
+      dpt-cols.at(self.ens-rennes.department),
+      dpt-cols.at(self.ens-rennes.department).lighten(60%),
+    )
   }
   alt-cell(fill: subheader-col, inset: 1em, {
     set align(horizon)
     set text(fill: self.colors.neutral-lightest)
     if self.store.title == auto {
       context {
-        show heading : it => text(size:.8em, weight:"regular", it)
-        utils.call-or-display(self, utils.current-heading(level:2))
+        show heading: it => text(size: .8em, weight: "regular", it)
+        utils.call-or-display(self, utils.current-heading(level: 2).body)
       }
     } else if self.store.title != none {
       utils.call-or-display(self, self.store.title)
@@ -163,7 +165,7 @@
 
 #let slide(title: auto, ..args) = touying-slide-wrapper(self => {
   set text(font: list-font)
-  set page(foreground: align(top+left)[ #image("src/images/circles.png")])
+  set page(foreground: align(top + left)[ #image("src/images/circles.png")])
   set list(
     marker: (
       text(self.colors.primary, sym.triangle.r.filled),
@@ -177,7 +179,7 @@
     config-page(
       header: header,
       footer: footer,
-      margin: (top: 6em, bottom: 1.5em, x: 2em)
+      margin: (top: 6em, bottom: 1.5em, x: 2em),
     ),
   )
   touying-slide(self: self, ..args)
@@ -185,7 +187,7 @@
 
 #let title-slide(additional-content: none, ..args) = touying-slide-wrapper(self => {
   set text(font: list-font)
-  set page(foreground: align(top+left)[ #image("src/images/circles.png")])
+  set page(foreground: align(top + left)[ #image("src/images/circles.png")])
   let info = self.info + args.named()
   let body = {
     set align(center + horizon)
@@ -198,7 +200,7 @@
         text(size: 2em, fill: self.colors.neutral-lightest, info.title)
         linebreak()
         text(size: 1em, fill: self.colors.neutral-lightest, info.subtitle)
-      }
+      },
     )
     set text(fill: self.colors.neutral-darkest)
     if info.authors != none {
@@ -217,7 +219,7 @@
     config-page(
       header: header,
       footer: footer,
-      margin: (top: 8em, bottom: 1.5em, x: 2em)
+      margin: (top: 8em, bottom: 1.5em, x: 2em),
     ),
   )
 
@@ -256,12 +258,12 @@
 
   assert(
     department in dpt-cols,
-    message: "`department` must be one of " + dpt-cols.keys().map(repr).join(", ", last: ", or ")
+    message: "`department` must be one of " + dpt-cols.keys().map(repr).join(", ", last: ", or "),
   )
 
   assert(
     section-style in section-styles,
-    message: "`section-style` must be one of " + section-styles.join(", ", last: ", or ")
+    message: "`section-style` must be one of " + section-styles.join(", ", last: ", or "),
   )
 
   show: touying-slides.with(
@@ -277,7 +279,7 @@
       primary: if display-dpt and department != none {
         dpt-cols.at(department)
       } else {
-         rgb("324c98")
+        rgb("324c98")
       },
       neutral-lightest: rgb("#ffffff"),
       neutral-lighter: rgb("#ffffff"),
