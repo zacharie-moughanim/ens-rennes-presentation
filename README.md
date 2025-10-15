@@ -1,7 +1,7 @@
 # ENS Rennes template for presentations
 
-The unofficial ENS Rennes [typst](https://typst.app/home/) template for presentations, based on [touying](https://touying-typ.github.io/).
-This template follows the guidelines described in the ENS Rennes graphic charter.
+This package provides a slide template to write presentation in [typst](https://typst.app/home/) based on [touying](https://touying-typ.github.io/).
+The template follows the guidelines described in the ENS Rennes graphic charter.
 
 ## Font
 
