@@ -20,7 +20,7 @@
   spen: rgb("#339963"),
 )
 
-#let section-styles = ("named subsection", "subsection", "section")
+#let section-styles = ("named subsection", "subsection", "compact section only")
 
 #let section-link(section, body) = {
   link((page: section.location().page(), x: 0pt, y: 0pt), body)
@@ -78,62 +78,7 @@
       })
       .join(h(1em))
   }
-  set align(top)
-  alt-cell(fill: self.colors.primary, inset: (left: 1em), {
-    set text(fill: self.colors.neutral-light.transparentize(50%), size: 0.7em)
-    show: it => grid(
-      columns: (1fr, auto),
-      align: (start + horizon, end + horizon),
-      it, pad(10pt, image("src/images/ENSRennes_LOGOblanc_centre.svg")),
-    )
-    if self.ens-rennes.section-style == "named subsection" {
-      stack(
-        dir: ttb,
-        spacing: 0.2em,
-        row(1),
-        text(size: 0.8em, row(2)),
-      )
-    } else if self.ens-rennes.section-style == "subsection" {
-      context {
-        let sections = get-sections(1)
-        grid(
-          columns: sections.len(),
-          column-gutter: 1em,
-          row-gutter: 0.2em,
-          ..sections.map(section => {
-            set text(fill: self.colors.neutral-lightest) if is-active-section(section)
-            section-link(section, section.body)
-          }),
-          ..sections.map(section => {
-            show: block.with(height: 1em)
-            set text(fill: self.colors.neutral-lightest) if is-active-section(section)
-            let subsections = get-sections(2, loc: section.location())
-            for subsection in subsections {
-              section-link(
-                subsection,
-                if is-active-section(subsection) {
-                  sym.circle.filled
-                } else {
-                  sym.circle.stroked
-                },
-              )
-            }
-          })
-        )
-      }
-    } else if self.ens-rennes.section-style == "section" {
-      row(1)
-    }
-  })
-
-  let subheader-col = rgb("#556fb2")
-  if self.ens-rennes.department != none and self.ens-rennes.display-dpt {
-    subheader-col = gradient.linear(
-      dpt-cols.at(self.ens-rennes.department),
-      dpt-cols.at(self.ens-rennes.department).lighten(60%),
-    )
-  }
-  alt-cell(fill: subheader-col, inset: 1em, {
+  let current-slide-title = {
     set align(horizon)
     set text(fill: self.colors.neutral-lightest)
     if self.store.title == auto {
@@ -144,7 +89,87 @@
     } else if self.store.title != none {
       utils.call-or-display(self, self.store.title)
     }
-  })
+  }
+  set align(top)
+  block(
+    width: 100%,
+    height: 2.5em,
+    above: 0pt,
+    below: 0pt,
+    breakable: false,
+    fill: self.colors.primary,
+    inset: (left: 1em), {
+      set text(fill: self.colors.neutral-light.transparentize(50%), size: 0.7em)
+      show: it => grid(
+        columns: (1fr, auto),
+        align: (start + horizon, end + horizon),
+        it, pad(10pt, image("src/images/ENSRennes_LOGOblanc_centre.svg")),
+      )
+      if self.ens-rennes.section-style == "named subsection" {
+        stack(
+          dir: ttb,
+          spacing: 0.2em,
+          row(1),
+          text(size: 0.8em, row(2)),
+        )
+      } else if self.ens-rennes.section-style == "subsection" {
+        context {
+          let sections = get-sections(1)
+          grid(
+            columns: sections.len(),
+            column-gutter: 1em,
+            row-gutter: 0.2em,
+            ..sections.map(section => {
+              set text(fill: self.colors.neutral-lightest) if is-active-section(section)
+              section-link(section, section.body)
+            }),
+            ..sections.map(section => {
+              show: block.with(height: 1em)
+              set text(fill: self.colors.neutral-lightest) if is-active-section(section)
+              let subsections = get-sections(2, loc: section.location())
+              for subsection in subsections {
+                section-link(
+                  subsection,
+                  if is-active-section(subsection) {
+                    sym.circle.filled
+                  } else {
+                    sym.circle.stroked
+                  },
+                )
+              }
+            })
+          )
+        }
+      } else if self.ens-rennes.section-style == "compact section only" {
+        grid(
+          columns:1,
+          rows:(1fr, 2fr),
+          // spacing: 0.2em,
+          text(size:.8em, row(1)),
+          current-slide-title,
+        )
+      }
+    }
+  )
+
+  if self.ens-rennes.section-style != "compact section only" {
+    let subheader-col = rgb("#556fb2")
+    if self.ens-rennes.department != none and self.ens-rennes.display-dpt {
+      subheader-col = gradient.linear(
+        dpt-cols.at(self.ens-rennes.department),
+        dpt-cols.at(self.ens-rennes.department).lighten(60%),
+      )
+    }
+    block(
+      width: 100%,
+      height: 2.5em,
+      above: 0pt,
+      below: 0pt,
+      breakable: false,
+      fill: subheader-col, inset: 1em, 
+      current-slide-title
+    )
+  }
 }
 
 #let footer(self) = {
@@ -174,12 +199,18 @@
     ),
   )
   self.store.title = title
+  let header-margin = if self.ens-rennes.section-style == "compact section only" {
+    3em
+  } else {
+    6em
+  }
+
   self = utils.merge-dicts(
     self,
     config-page(
       header: header,
       footer: footer,
-      margin: (top: 6em, bottom: 1.5em, x: 2em),
+      margin: (top: header-margin, bottom: 1.5em, x: 2em),
     ),
   )
   touying-slide(self: self, ..args)

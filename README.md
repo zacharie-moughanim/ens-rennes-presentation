@@ -36,7 +36,7 @@ It has the following optional arguments:
 - `aspect-ratio`: the aspect-ratio of each slide; `"16-9"` by default;
 - `department`: your department as a string (`"info"`, `"mktro"`, `"dem"`, `"2sep"`, `"maths"`, `"spen"`);
 - `display-dpt`: set to `true` if you want the theme to align with the graphic charter of the department rather than the school's; `false` by default;
-- `section-style`: several options to display sections in the header: `"section"` to display only section titles, `"named subsection"` to display section and subsection titles and `"subsection"` to display section titles, and subsection as bullets.
+- `section-style`: several options to display sections in the header: `"named subsection"` to display section and subsection titles, `"subsection"` to display section titles, and subsection as bullets and `"compact section only"` for a more compact header, with only sections and current subsection displayed.
 
 You can provide additional information in the config-info dictionary:
 - `title`: the title of the presentation;
