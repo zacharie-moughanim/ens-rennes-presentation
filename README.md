@@ -36,7 +36,27 @@ It has the following optional arguments:
 - `aspect-ratio`: the aspect-ratio of each slide; `"16-9"` by default;
 - `department`: your department as a string (`"info"`, `"mktro"`, `"dem"`, `"2sep"`, `"maths"`, `"spen"`);
 - `display-dpt`: set to `true` if you want the theme to align with the graphic charter of the department rather than the school's; `false` by default;
-- `section-style`: several options to display sections in the header: `"named subsection"` to display section and subsection titles, `"subsection"` to display section titles, and subsection as bullets and `"compact section only"` for a more compact header, with only sections and current subsection displayed.
+- `section-style`: several options to display sections in the header: `"named subsection"` to display section and subsection titles, `"subsection"` to display section titles, and subsection as bullets and `"compact section only"` for a more compact header, with only sections and current subsection displayed. `"named subsection"` and `"subsection"` options are meant to be used with the `slide` function whereas `"compact section only"` is meant to be used with typst titles.
+
+Examples:
+```typst
+// with "named subsection" or "subsection"
+= Section 1
+
+== Subsection 1.1
+
+#slide(title:[Slide 1])[
+  Content
+]
+```
+```typst
+// with "compact section only"
+= Section 1
+
+== Slide 1
+
+Content
+```
 
 You can provide additional information in the config-info dictionary:
 - `title`: the title of the presentation;
@@ -45,6 +65,7 @@ You can provide additional information in the config-info dictionary:
 - `authors`: the author(s) as content;
 - `mini-authors`: a shortened version of the authors, displayed in the footer. If undefined, the authors are displayed in the footer.
 - `date`: the date you want to appear in the title page.
+
 
 ## Personalization
 
